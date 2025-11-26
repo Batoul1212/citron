@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Citron & Ingefær Quiz</title>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 30px;
+        background: linear-gradient(#fff6a9, #ffe45c);
+        background-attachment: fixed;
+    }
+
+    .container {
+        max-width: 520px;
+        margin: auto;
+        background: white;
+        padding: 25px;
+        border-radius: 14px;
+        border: 3px solid #ffcf2f;
+        box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+    }
+
+    h2 {
+        text-align: center;
+        font-weight: bold;
+        color: #d4a400;
+        margin-top: 0;
+    }
+
+    button {
+        width: 48%;
+        padding: 12px;
+        font-size: 16px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        background: #ffd949;
+        font-weight: bold;
+        margin-top: 10px;
+    }
+
+    button:hover {
+        background: #ffcf28;
+    }
+
+    #quiz, #result, #points, #ingredients, #endText {
+        margin-top: 18px;
+        font-weight: bold;
+        white-space: pre-line;
+        color: #494949;
+    }
+</style>
+</head>
+
+<body>
+<div class="container">
+<h2>Citron & Ingefær Quiz</h2>
+
+<div id="quiz"></div>
+
+<p id="result"></p>
+<p id="ingredients"></p>
+<p id="points"></p>
+<p id="endText"></p>
+</div>
+
+<!-- LYDEFFEKTER -->
+<audio id="correctSound">
+  <source src="https://actions.google.com/sounds/v1/cartoon/pop.ogg" type="audio/ogg">
+</audio>
+
+<audio id="wrongSound">
+  <source src="https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg" type="audio/ogg">
+</audio>
+
+<script>
+const questions = [
+  { q: "Indeholder citron C-vitamin?", answer: "ja", ingredient: "4 dl koldt vand" },
+  { q: "Hjælper C-vitamin immunforsvaret?", answer: "ja", ingredient: "50 g frisk ingefær" },
+  { q: "Er C-vitamin vandopløseligt?", answer: "ja", ingredient: "2 stk. citroner" },
+  { q: "Er ingefær kendt for at dæmpe inflammation?", answer: "ja", ingredient: "2 spsk. honning" },
+  { q: "Kan et ingefærshot give mere energi i skolen?", answer: "ja", ingredient: "(Alle ingredienser samlet!)" }
+];
+
+let index = -1;
+let ingredients = [];
+let points = 0;
+
+function loadNext() {
+    index++;
+
+    document.getElementById("result").innerText = "";
+
+    if (index < questions.length) {
+        const c = questions[index];
+        document.getElementById("quiz").innerHTML = `
+        <h3>${c.q}</h3>
+        <button onclick="answer('ja')">Ja</button>
+        <button onclick="answer('nej')">Nej</button>
+        `;
+    } else {
+        endScreen();
+    }
+}
+
+function answer(choice) {
+    const c = questions[index];
+
+    if (choice === c.answer) {
+        document.getElementById("correctSound").play();
+        points++;
+        ingredients.push("• " + c.ingredient);
+
+        document.getElementById("result").innerText =
+            "Rigtigt! Du fik: " + c.ingredient;
+    } else {
+        document.getElementById("wrongSound").play();
+        document.getElementById("result").innerText =
+            "Forkert – men du kan stadig klare den!";
+    }
+
+    document.getElementById("ingredients").innerText =
+        "Ingredienser indsamlet:\n" + ingredients.join("\n");
+
+    document.getElementById("points").innerText =
+        "Point: " + points;
+
+    setTimeout(loadNext, 1000);
+}
+
+function endScreen() {
+    document.getElementById("quiz").innerHTML = "";
+    document.getElementById("result").innerText = "";
+    document.getElementById("ingredients").innerText =
+        "Alle ingredienser til ingefærshotten:\n" + ingredients.join("\n");
+
+    document.getElementById("endText").innerText =
+        "Ingefær er fyldt med antioxidanter og anti-inflammatoriske stoffer, som styrker immunforsvaret og giver dig mere energi i skolen. " +
+        "Det kan hjælpe dig med at få en bedre koncentration og dermed en bedre karakter.\n\nTake a shot!";
+}
+
+// Start med første spørgsmål med det samme
+loadNext();
+</script>
+</body>
+</html>
